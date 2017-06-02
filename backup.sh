@@ -11,6 +11,7 @@
 # for more information.
 #----------------------------------------------------
 
+
 # (1) set up all the mysqldump variables
 FILE=minime.sql.`date +"%Y%m%d"`
 DBSERVER=127.0.0.1
