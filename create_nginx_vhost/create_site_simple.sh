@@ -31,7 +31,7 @@ sudo $SED -i "s!ROOT!$WEB_DIR/$SITE_DIR!g" $CONFIG
 
 # set up web root
 sudo mkdir $WEB_DIR/$SITE_DIR
-sudo chown nginx:nginx -R $WEB_DIR/$SITE_DIR
+sudo chown vagrant:vagrant -R $WEB_DIR/$SITE_DIR
 sudo chmod 600 $CONFIG
 
 # create symlink to enable site
@@ -43,6 +43,6 @@ sudo /usr/local/nginx/sbin/nginx -s reload
 # put the template index.html file into the new domains web dir
 sudo cp $CURRENT_DIR/index.html.template $WEB_DIR/$SITE_DIR/index.html
 sudo $SED -i "s/SITE/$DOMAIN/g" $WEB_DIR/$SITE_DIR/index.html
-sudo chown nginx:nginx $WEB_DIR/$SITE_DIR/index.html
+sudo chown vagrant:vagrant $WEB_DIR/$SITE_DIR/index.html
 
 echo "Site Created for $DOMAIN"
