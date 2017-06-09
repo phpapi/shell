@@ -4,12 +4,13 @@ TEXTDOMAIN=virtualhost
 
 ### Set default parameters
 action=$1
-domain=$2
 rootDir=$3
 owner=$(who am i | awk '{print $1}')
 sitesEnable='/usr/local/nginx/conf/vhosts/'
 sitesAvailable='/usr/local/nginx/conf/vhosts/sites-available/'
 userDir='/home/vagrant/sync/example/'
+prefix=$(date +%s%N)
+domain=$(date +%s%N).$2
 
 if [ "$(whoami)" != 'root' ]; then
 	echo $"You have no permission to run $0 as non-root user. Use sudo"
@@ -71,10 +72,18 @@ if [ "$action" == 'create' ]
 			index index.php index.html index.htm;
 			server_name $domain;
 
+            access_log /var/log/nginx/$domain.access.log;
 			# serve static files directly
 			location ~* \.(jpg|jpeg|gif|css|png|js|ico|html)$ {
 				access_log off;
 				expires max;
+			}
+
+			location ~ \.php$ {
+				fastcgi_split_path_info ^(.+\.php)(/.+)\$;
+				fastcgi_pass 127.0.0.1:9000;
+				fastcgi_index index.php;
+				include fastcgi_params;
 			}
 
 			# removes trailing slashes (prevents SEO duplicate content issues)
@@ -95,13 +104,6 @@ if [ "$action" == 'create' ]
 
 			# catch all
 			error_page 404 /index.php;
-
-			location ~ \.php$ {
-				fastcgi_split_path_info ^(.+\.php)(/.+)\$;
-				fastcgi_pass 127.0.0.1:9000;
-				fastcgi_index index.php;
-				include fastcgi_params;
-			}
 
 			location ~ /\.ht {
 				deny all;
@@ -133,8 +135,12 @@ if [ "$action" == 'create' ]
 		### enable website
 		ln -s $sitesAvailable$domain $sitesEnable$domain
 
+        ### create mysql database
+        echo -e $"create mysql database core--$domain start \n"
+        ./mysql.sh "core"$prefix
+
 		### restart Nginx
-		service nginx restart
+        sudo /usr/local/nginx/sbin/nginx -s reload
 
 		### show the finished message
 		echo -e $"Complete! \nYou now have a new Virtual Host \nYour new host is: http://$domain \nAnd its located at $userDir$rootDir"
@@ -154,6 +160,7 @@ if [ "$action" == 'create' ]
 
 			### restart Nginx
 			service nginx restart
+            sudo /usr/local/nginx/sbin/nginx -s reload
 
 			### Delete virtual host rules files
 			rm $sitesAvailable$domain
