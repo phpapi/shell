@@ -20,7 +20,7 @@ DOMAIN=$prefix.$1
 PATTERN="^([[:alnum:]]([[:alnum:]\-]{0,61}[[:alnum:]])?\.)+[[:alpha:]]{2,6}$"
 if [[ "$DOMAIN" =~ $PATTERN ]]; then
 	DOMAIN=`echo $DOMAIN | tr '[A-Z]' '[a-z]'`
-	output="Creating hosting for:" $DOMAIN
+	output="Creating hosting for:"$DOMAIN
 else
     status="0"
 	output="invalid domain name"
@@ -65,6 +65,7 @@ sudo chown vagrant:vagrant $WEB_DIR/$SITE_DIR/index.html
 #echo -e $"create mysql database core--$DOMAIN start \n"
 #sh /home/vagrant/sync/shell/create_nginx_vhost/mysql.sh "core"$prefix
 
+
 MYSQL_BIN="/usr/local/mysql/bin/mysql"
 MYSQL_ROOT="stars"
 MYSQL_PASS="123456"
@@ -80,6 +81,11 @@ then
 else
   $MYSQL_BIN -u "$MYSQL_ROOT" -e "SHOW DATABASES"
 fi
+
+### Add db config to WEB_DIR
+sudo cp $CURRENT_DIR/db.php $WEB_DIR/$SITE_DIR/$DOMAIN.php
+sudo $SED -i "s/CORE/$DB/g" $WEB_DIR/$SITE_DIR/$DOMAIN.php
+sudo chown vagrant:vagrant $WEB_DIR/$SITE_DIR/$DOMAIN.php
 
 output='Site Created for '$DOMAIN
 echo -e "{\"status\":\""$status"\", \"msg\":\""$output"\",\"data\":\""$DOMAIN"\", \"uptime\":\""$date"\"}"
