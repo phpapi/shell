@@ -36,42 +36,18 @@ if [ -e $NGINX_CONFIG$DOMAIN ]; then
     exit;
 fi
 
-#Replace dots with underscores
-SITE_DIR=`echo $DOMAIN | $SED 's/\./_/g'`
-
-# Now we need to copy the virtual host template
-CONFIG=$NGINX_CONFIG/$DOMAIN.conf
-sudo cp $CURRENT_DIR/virtual_host.template $CONFIG
-sudo $SED -i "s/DOMAIN/$DOMAIN/g" $CONFIG
-sudo $SED -i "s!ROOT!$WEB_DIR/$SITE_DIR!g" $CONFIG
-
-# set up web root
-sudo mkdir $WEB_DIR/$SITE_DIR
-sudo chown vagrant:vagrant -R $WEB_DIR/$SITE_DIR
-sudo chmod 600 $CONFIG
-
-# create symlink to enable site
-sudo ln -s $CONFIG $NGINX_SITES_ENABLED/$DOMAIN.conf
-
-# reload Nginx to pull in new config
-sudo /usr/local/nginx/sbin/nginx -s reload
-
-# put the template index.html file into the new domains web dir
-sudo cp $CURRENT_DIR/index.html.template $WEB_DIR/$SITE_DIR/index.html
-sudo $SED -i "s/SITE/$DOMAIN/g" $WEB_DIR/$SITE_DIR/index.html
-sudo chown vagrant:vagrant $WEB_DIR/$SITE_DIR/index.html
 
 ### create nginx virtual host
-SITE=(m.$DOMAIN agent.$DOMAIN imc.$DOMAIN)
+SITE=($DOMAIN m.$DOMAIN agent.$DOMAIN imc.$DOMAIN)
 for a in "${SITE[@]}"; do
+    SITE_DIR=`echo $a | $SED 's/\./_/g'`
     CONFIGM=$NGINX_CONFIG/$a.conf
     sudo cp $CURRENT_DIR/virtual_host.template $CONFIGM
     sudo $SED -i "s/DOMAIN/$a/g" $CONFIGM
+    sudo $SED -i "s!ROOT!$WEB_DIR/$SITE_DIR!g" $CONFIGM
 
-    sudo $SED -i "s!ROOT!$WEB_DIR/$a!g" $CONFIGM
-
-    sudo mkdir $WEB_DIR/$a
-    sudo chown vagrant:vagrant -R $WEB_DIR/$a
+    sudo mkdir $WEB_DIR/$SITE_DIR
+    sudo chown vagrant:vagrant -R $WEB_DIR/$SITE_DIR
     sudo chmod 600 $CONFIGM
 
     sudo ln -s $CONFIGM $NGINX_SITES_ENABLED/$a.conf
@@ -80,9 +56,9 @@ for a in "${SITE[@]}"; do
     sudo /usr/local/nginx/sbin/nginx -s reload
 
     # put the template index.html file into the new domains web dir
-    sudo cp $CURRENT_DIR/index.html.template $WEB_DIR/$a/index.html
-    sudo $SED -i "s/SITE/$a/g" $WEB_DIR/$a/index.html
-    sudo chown vagrant:vagrant $WEB_DIR/$a/index.html
+    sudo cp $CURRENT_DIR/index.html.template $WEB_DIR/$SITE_DIR/index.html
+    sudo $SED -i "s/SITE/$a/g" $WEB_DIR/$SITE_DIR/index.html
+    sudo chown vagrant:vagrant $WEB_DIR/$SITE_DIR/index.html
 done
 
 ### create mysql database
