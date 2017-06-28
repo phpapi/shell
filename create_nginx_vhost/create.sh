@@ -61,8 +61,8 @@ sudo cp $CURRENT_DIR/index.html.template $WEB_DIR/$SITE_DIR/index.html
 sudo $SED -i "s/SITE/$DOMAIN/g" $WEB_DIR/$SITE_DIR/index.html
 sudo chown vagrant:vagrant $WEB_DIR/$SITE_DIR/index.html
 
+### create nginx virtual host
 SITE=(m.$DOMAIN agent.$DOMAIN imc.$DOMAIN)
-
 for a in "${SITE[@]}"; do
     CONFIGM=$NGINX_CONFIG/$a.conf
     sudo cp $CURRENT_DIR/virtual_host.template $CONFIGM
@@ -85,13 +85,9 @@ for a in "${SITE[@]}"; do
     sudo chown vagrant:vagrant $WEB_DIR/$a/index.html
 done
 
-
-
-
 ### create mysql database
 #echo -e $"create mysql database core--$DOMAIN start \n"
 #sh /home/vagrant/sync/shell/create_nginx_vhost/mysql.sh "core"$prefix
-
 
 MYSQL_BIN="/usr/local/mysql/bin/mysql"
 MYSQL_ROOT="stars"
