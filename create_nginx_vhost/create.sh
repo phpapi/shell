@@ -36,7 +36,6 @@ if [ -e $NGINX_CONFIG$DOMAIN ]; then
     exit;
 fi
 
-
 ### create nginx virtual host
 SITE=($DOMAIN m.$DOMAIN agent.$DOMAIN imc.$DOMAIN)
 for a in "${SITE[@]}"; do
@@ -72,7 +71,6 @@ MYSQL_HOST="192.168.200.29"
 DB="core"$prefix
 DB_NAME='master'
 TIME=`date -d "$currentTime" +%s`
-#echo "DATABASES IS :"$DB":"
 if [ $MYSQL_PASS ]
 then
   #echo "logging into as $MYSQL_ROOT"
