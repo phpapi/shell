@@ -6,6 +6,7 @@ CURRENT_DIR=`dirname $0`
 status='1'
 date=`sudo date`
 
+# check the domain is null
 if [ -z $1 ]; then
     status="0"
 	output="No domain name given"
