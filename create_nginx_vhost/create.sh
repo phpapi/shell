@@ -61,7 +61,7 @@ for a in "${SITE[@]}"; do
     sudo chown vagrant:vagrant $WEB_DIR/$SITE_DIR/index.html
 done
 
-### create mysql database
+### create mysql database data initialization
 #echo -e $"create mysql database core--$DOMAIN start \n"
 #sh /home/vagrant/sync/shell/create_nginx_vhost/mysql.sh "core"$prefix
 
