@@ -2,9 +2,9 @@
               
 FSMAX="80"
 remote_user='root'
+# There need have two ip address at least
 remote_ip=(192.168.33.10,192.168.33.10)
-ip_num='2'
-echo "$ip_num"
+ip_num='0'
 
 while [ "$ip_num" -le "$(expr ${#remote_ip[@]} -l)"]
 do
