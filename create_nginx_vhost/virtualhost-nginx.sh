@@ -10,7 +10,7 @@ sitesEnable='/usr/local/nginx/conf/vhosts/'
 sitesAvailable='/usr/local/nginx/conf/vhosts/sites-available/'
 userDir='/home/vagrant/sync/example/'
 prefix=$(date +%s%N)
-domain=$(date +%s%N).$2
+domain=$prefix.$2
 
 if [ "$(whoami)" != 'root' ]; then
 	echo $"You have no permission to run $0 as non-root user. Use sudo"
@@ -79,13 +79,6 @@ if [ "$action" == 'create' ]
 				expires max;
 			}
 
-			location ~ \.php$ {
-				fastcgi_split_path_info ^(.+\.php)(/.+)\$;
-				fastcgi_pass 127.0.0.1:9000;
-				fastcgi_index index.php;
-				include fastcgi_params;
-			}
-
 			# removes trailing slashes (prevents SEO duplicate content issues)
 			if (!-d \$request_filename) {
 				rewrite ^/(.+)/\$ /\$1 permanent;
@@ -105,6 +98,13 @@ if [ "$action" == 'create' ]
 			# catch all
 			error_page 404 /index.php;
 
+			location ~ \.php$ {
+				fastcgi_split_path_info ^(.+\.php)(/.+)\$;
+				fastcgi_pass 127.0.0.1:9000;
+				fastcgi_index index.php;
+				include fastcgi_params;
+			}
+
 			location ~ /\.ht {
 				deny all;
 			}
@@ -114,6 +114,8 @@ if [ "$action" == 'create' ]
 			echo -e $"There is an ERROR create $domain file"
 			exit;
 		else
+            #sudo chown root:root -R $WEB_DIR/$SITE_DIR
+            sudo chmod 600 $sitesAvailable$domain
 			echo -e $"\nNew Virtual Host Created\n"
 		fi
 
