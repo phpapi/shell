@@ -65,13 +65,17 @@ done
 #echo -e $"create mysql database core--$DOMAIN start \n"
 #sh /home/vagrant/sync/shell/create_nginx_vhost/mysql.sh "core"$prefix
 
+#also we can set more database and need to loop,
 MYSQL_BIN="/usr/local/mysql/bin/mysql"
 MYSQL_ROOT="stars"
 MYSQL_PASS="123456"
 MYSQL_HOST="192.168.200.29"
+
 DB="core"$prefix
 DB_NAME='master'
+
 TIME=`date -d "$currentTime" +%s`
+
 if [ $MYSQL_PASS ]
 then
   #echo "logging into as $MYSQL_ROOT"
